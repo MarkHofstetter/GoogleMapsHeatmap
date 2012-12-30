@@ -1,0 +1,42 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>geographic distribution of .at domains</title>
+<script src="http://maps.google.com/maps?file=api&v=2&key=ABQIAAAAAXzVqdclL0jzM6wze2IEuxQr0tbz71XQnJwTC-TGNxXfT45DoxT_TXS_suxr1ZPTpF8yfWn-ucy2GQ"
+        type="text/javascript"></script>
+<script type="text/javascript">
+
+function load() {
+  if (GBrowserIsCompatible()) {
+//    var urlTemplate = 'http://www.trust-box.at/dev/googlemaps/heatmap/hm.fcgi?';
+//    var urlTemplate = 'http://www.trust-box.at/dev/googlemaps/heatmap/hm.fcgi?';
+    var urlTemplate = 'hm.fcgi?';
+        urlTemplate += 'map=data/test.map&';
+        urlTemplate += 'layers=datapoint&';
+        urlTemplate += 'mode=map&';
+        urlTemplate += 'tilemode=gmap&';
+        urlTemplate += 'tile={X}+{Y}+{Z}';
+    var myLayer = new GTileLayer(null,0,18,{
+                                 tileUrlTemplate:urlTemplate,
+                                 isPng:true,
+                                 opacity:0.5 });
+    var map = new GMap2(document.getElementById("map"));
+    map.addControl(new GLargeMapControl());
+    map.addControl(new GMapTypeControl());
+    map.setCenter(new GLatLng(48.2130, 16.375), 9);
+    map.addOverlay(new GTileLayerOverlay(myLayer));
+  }
+}
+
+</script>
+</head>
+<h2>geographic distribution of .at domains</h2>
+<body onload="load()" onunload="GUnload()">
+  <div id="map" style="width: 1200px; height: 700px"></div>
+<a href="mailto:mark@hofstetter.at">Mark Hofstetter, University of Vienna</a>
+</body>
+</html>
+
