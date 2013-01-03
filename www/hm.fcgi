@@ -10,7 +10,8 @@ use lib "$Bin/../lib";
 use GoogleHeatmap;
 
 my $cache = CHI->new( driver  => 'Memcached::libmemcached',
-    servers => [ "127.0.0.1:11211" ],
+    servers    => [ "127.0.0.1:11211" ],
+    namespace  => 'GoogleMapsHeatmap',
 );
 
 our $dbh = DBI->connect("dbi:Pg:dbname=gisdb", 'gisdb', 'gisdb', {AutoCommit => 0});
