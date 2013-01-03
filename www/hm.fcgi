@@ -16,7 +16,6 @@ my $cache = CHI->new( driver  => 'Memcached::libmemcached',
 
 our $dbh = DBI->connect("dbi:Pg:dbname=gisdb", 'gisdb', 'gisdb', {AutoCommit => 0});
 
-
 my $request = FCGI::Request();
 
 while ($request->Accept() >= 0) {
@@ -26,9 +25,9 @@ while ($request->Accept() >= 0) {
   my ($tile) = ($p =~ /tile=(.+)/);
   $tile =~ s/\+/ /g;
   
-  # package needs a CHI Object, for caching 
+  # package needs a CHI Object for caching 
   #               a Function Reference to get LatLOng within a Google Tile
-  #               a config File
+  #               maximum number of points per zoom level
  
   my $ghm = GoogleHeatmap->new();
   $ghm->palette('palette.store');
@@ -68,8 +67,6 @@ while ($request->Accept() >= 0) {
 
 sub get_points {
   my $r = shift;
-#  my ($latn, $lngw, $lats, $lnge) = @_;
-##  my $dbh = DBI->connect("dbi:Pg:dbname=gisdb", 'gisdb', 'gisdb', {AutoCommit => 0});
 
   my $sth = $dbh->prepare( qq(select ST_AsEWKT(geom) from geodata
                          where geom &&
@@ -86,17 +83,6 @@ sub get_points {
     push (@p, [$x ,$y]);
   }
   $sth->finish;
-##   $dbh->disconnect;
   return \@p;
 }
-
-
-__END__
-select ST_AsEWKT(geom) from geodata where geom && ST_SetSRID(ST_MakeBox2D(ST_Point(48.2226, 16.34765),                     
-ST_Point(48.16631, 16.4352)),4326);
-           st_asewkt            
---------------------------------
- SRID=4326;POINT(48.213 16.375)
-(1 row)
-
 
