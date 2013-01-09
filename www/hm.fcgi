@@ -7,7 +7,7 @@ use CHI;
 use FindBin qw/$Bin/;
 use lib "$Bin/../lib";
 
-use GoogleHeatmap;
+use Geo::Heatmap;
 
 my $cache = CHI->new( driver  => 'Memcached::libmemcached',
     servers    => [ "127.0.0.1:11211" ],
@@ -29,7 +29,7 @@ while ($request->Accept() >= 0) {
   #               a Function Reference to get LatLOng within a Google Tile
   #               maximum number of points per zoom level
  
-  my $ghm = GoogleHeatmap->new();
+  my $ghm = Geo::Heatmap->new();
   $ghm->palette('palette.store');
   $ghm->zoom_scale( {
     1 => 298983,

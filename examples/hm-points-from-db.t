@@ -2,7 +2,7 @@
 
 use strict;
 use CHI;
-use GoogleHeatmap;
+use Geo::Heatmap;
 use Data::Dumper;
 use DBI;
 use Storable;
@@ -24,7 +24,7 @@ $p = "tile=276+177+9";
 my ($tile) = ($p =~ /tile=(.+)/);
 $tile =~ s/\+/ /g;
   
-my $ghm = GoogleHeatmap->new();
+my $ghm = Geo::Heatmap->new();
 $ghm->debug(1);
 $ghm->cache($dummy_cache);
 $ghm->return_points( \&get_points );  
