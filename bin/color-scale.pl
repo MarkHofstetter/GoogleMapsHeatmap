@@ -16,4 +16,4 @@ for (my $i = 0;$i <= 500; $i++) {
   push @palette, \@pixels;
 }
 print Dumper \@palette;
-Storable::nstore(\@palette, 'paletlte.store');
+Storable::nstore(\@palette, 'palette.store');
