@@ -1,8 +1,8 @@
-#!/usr/local/bin/perl
+#!/usr/bin/env perl
 
 use Test::Most;
 use CHI;
-use GoogleHeatmap;
+use Geo::Heatmap;
 use Data::Dumper;
 use Storable;
 
@@ -14,12 +14,12 @@ my $p = "tile=276+177+9";
 
 my ($tile) = ($p =~ /tile=(.+)/);
 $tile =~ s/\+/ /g;
-  
-my $ghm = GoogleHeatmap->new();
+
+my $ghm = Geo::Heatmap->new();
 ## $ghm->debug(1);
 $ghm->palette('www/palette.store');
 $ghm->cache($dummy_cache);
-$ghm->return_points( \&get_points_from_storable );  
+$ghm->return_points( \&get_points_from_storable );
 
 $ghm->zoom_scale( {
   1 => 298983,

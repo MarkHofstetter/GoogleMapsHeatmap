@@ -1,0 +1,14 @@
+examples/hm-points-from-db.t
+lib/Geo/Heatmap.pm
+lib/Geo/Heatmap/USNaviguide_Google_Tiles.pm
+Makefile.PL
+MANIFEST			This list of files
+README.md
+t/hm-create-pic-from-points.t
+t/target_pic.png
+t/test-tile-coord-point.store
+t/test_points.dump
+TODO
+www/GoogleMapsHeatmap.html.example
+www/hm.fcgi
+www/palette.store
