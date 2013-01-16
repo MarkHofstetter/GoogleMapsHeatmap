@@ -2,7 +2,7 @@
 
 use Test::Most;
 use CHI;
-use GoogleHeatmap;
+use Geo::Heatmap;
 use Data::Dumper;
 use Storable;
 
@@ -15,7 +15,7 @@ my $p = "tile=276+177+9";
 my ($tile) = ($p =~ /tile=(.+)/);
 $tile =~ s/\+/ /g;
   
-my $ghm = GoogleHeatmap->new();
+my $ghm = Geo::Heatmap->new();
 ## $ghm->debug(1);
 $ghm->palette('www/palette.store');
 $ghm->cache($dummy_cache);

@@ -1,9 +1,9 @@
-package GoogleHeatmap;
+package Geo::Heatmap;
 use Moose;
+use Geo::Heatmap::USNaviguide_Google_Tiles;
+use Image::Magick;
+use Storable;
 
-# generate a density map (aka heatmap) overlay layer for Google Maps
-
-# debug - if set to a value larger than 0 the package emits various debugging information
 has 'debug'         => (isa => 'Str', is => 'rw');
 has 'cache'         => (isa => 'Object', is => 'rw');
 has 'logfile'       => (isa => 'Str', is => 'rw');
@@ -13,9 +13,7 @@ has 'palette'       => (isa => 'Str', is => 'rw');
 
 __PACKAGE__->meta->make_immutable;
 
-use USNaviguide_Google_Tiles;
-use Image::Magick;
-use Storable;
+our $VERSION = '0.05';
 
 sub tile {
   my ($self, $tile, $debug) = @_;
@@ -98,7 +96,6 @@ sub calc_hm_tile {
   
   for (my $i = 0; $i <= $max; $i++) {
     for (my $j = 0; $j <= $max; $j++) {
-      # $image->Draw(fill=>rgb("$density->[$i][$j], 0, 0") , primitive=>'rectangle', points=>"$i,$j $bin,$bin");
       my $xc  = $i*$bin;
       my $yc  = $j*$bin;
       my $xlc = $xc+$bin;
@@ -111,7 +108,6 @@ sub calc_hm_tile {
       my $color = $palette->[$color_index];
       my $rgb = sprintf "%s%%, %s%%, %s%%", $color->[0], $color->[1], $color->[2];
       $image->Draw(fill=>"rgb($rgb)" , primitive=>'rectangle', points=>"$xc,$yc $xlc,$ylc");
-    # $image->Draw(fill=>"rgb($rgb)" , primitive=>'circle', points=>"$xc,$yc $xlc,$ylc");
       printf "[%s][%s] %s %s\n", $i, $j, $d, $color_index if $debug > 0;
     }
   }
@@ -143,8 +139,6 @@ sub create_tile {
     my @d = Google_Coord_to_Pix($value, $p->[0], $p->[1]);
     my $ix = $d[1] - $r{PXW};
     my $iy = $d[0] - $r{PYN};
-   ## $image->Set("pixel[$ix,$iy]"=>'red');
-   ## $image->Set("pixel[$ix,$iy]"=>'green');
     $image->Set("pixel[$ix,$iy]"=>"rgb(0, 0, 89)");
   }
 

@@ -1,3 +1,4 @@
+package Geo::Heatmap::USNaviguide_Google_Tiles ;
 # Calculate tile characteristics given a bounding box of coordinates and a zoom...
 # Author. John D. Coryat 01/2008...
 # USNaviguide LLC.
@@ -15,7 +16,6 @@
 # Google_Pix_to_Tile				# Calculate a tile name from a pixel location and zoom
 
 require 5.003 ;
-package USNaviguide_Google_Tiles ;
 use strict ;
 use Math::Trig ;
 
