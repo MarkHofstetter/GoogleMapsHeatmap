@@ -54,7 +54,7 @@ while ($request->Accept() >= 0) {
 
   $ghm->cache($cache);
   $ghm->return_points( \&get_points );
-  my $image = $ghm->create_hm_tile($tile);
+  my $image = $ghm->tile($tile);
   
   my $length = length($image);
   

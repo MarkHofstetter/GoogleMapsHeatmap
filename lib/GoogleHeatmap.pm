@@ -1,6 +1,9 @@
 package GoogleHeatmap;
 use Moose;
 
+# generate a density map (aka heatmap) overlay layer for Google Maps
+
+# debug - if set to a value larger than 0 the package emits various debugging information
 has 'debug'         => (isa => 'Str', is => 'rw');
 has 'cache'         => (isa => 'Object', is => 'rw');
 has 'logfile'       => (isa => 'Str', is => 'rw');
@@ -12,17 +15,14 @@ __PACKAGE__->meta->make_immutable;
 
 use USNaviguide_Google_Tiles;
 use Image::Magick;
-use CHI;
 use Storable;
 
-sub create_hm_tile {
+sub tile {
   my ($self, $tile, $debug) = @_;
   $debug |= 0;
 
   my ($x, $y, $z) = split(/\s+/, $tile);
 
-  ## ok to make blur work we need the tile + all 8 bordering tiles
-  #  $image->GaussianBlur(geometry=>'255x255', radius=>"5", sigma=>"3");
   my $e;
   my $image = Image::Magick->new(magick=>'png');
   my %ubblob;
@@ -156,4 +156,136 @@ sub create_tile {
 
 
 1;
+
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Geo::Maps::Heatmap::Google - generate a density map (aka heatmap) overlay layer for Google Maps
+
+=head1 VERSION
+
+version 0.5
+
+=head1 REQUIRES
+
+L<Storable>
+
+L<CHI>
+
+L<Image::Magick>
+
+L<USNaviguide_Google_Tiles>
+
+L<Moose>
+
+
+=head1 METHODS
+
+=head2 calc_hm_tile
+
+ calc_hm_tile();
+
+=head2 create_hm_tile
+
+ create_hm_tile();
+
+=head2 create_tile
+
+ create_tile();
+
+
+=head1 ATTRIBUTES
+
+has 'debug'         => (isa => 'Str', is => 'rw');
+has 'cache'         => (isa => 'Object', is => 'rw');
+has 'logfile'       => (isa => 'Str', is => 'rw');
+has 'return_points' => (isa => 'CodeRef', is => 'rw');
+has 'zoom_scale'    => (isa => 'HashRef', is => 'rw');
+has 'palette'       => (isa => 'Str', is => 'rw');
+
+=head2 new
+
+  my $ghm = CPAN::Uploader->new();
+
+This method returns a new uploader.  You probably don't need to worry about
+this method.
+
+Valid arguments are the same as those to C<upload_file>.
+
+=head2 read_config_file
+
+  my $config = CPAN::Uploader->read_config_file( $filename );
+
+This reads the config file and returns a hashref of its contents that can be
+used as configuration for CPAN::Uploader.
+
+If no filename is given, it looks for F<.pause> in the user's home directory
+(from the env var C<HOME>, or the current directory if C<HOME> isn't set).
+
+=head2 log
+
+  $uploader->log($message);
+
+This method logs the given string.  The default behavior is to print it to the
+screen.  The message should not end in a newline, as one will be added as
+needed.
+
+=head2 log_debug
+
+This method behaves like C<L</log>>, but only logs the message if the
+CPAN::Uploader is in debug mode.
+
+=head1 ORIGIN
+
+This code is mostly derived from C<cpan-upload-http> by Brad Fitzpatrick, which
+in turn was based on C<cpan-upload> by Neil Bowers.  I (I<rjbs>) didn't want to
+have to use a C<system> call to run either of those, so I refactored the code
+into this module.
+
+=head1 AUTHOR
+
+Mark Hofstetter <hofstettm@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Mark Hofstetter
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+=head1 REQUIRES
+
+L<Storable> 
+
+L<CHI> 
+
+L<Image::Magick> 
+
+L<USNaviguide_Google_Tiles> 
+
+L<Moose> 
+
+
+=head1 METHODS
+
+=head2 calc_hm_tile
+
+ calc_hm_tile();
+
+=head2 create_hm_tile
+
+ create_hm_tile();
+
+=head2 create_tile
+
+ create_tile();
+
+
+=cut
 

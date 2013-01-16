@@ -42,7 +42,7 @@ $ghm->zoom_scale( {
   18 => 0,
 } );
 
-my $image = $ghm->create_hm_tile($tile);
+my $image = $ghm->tile($tile);
 is( length($image), 322419, 'blurred image created and has correct size');
 
 ## open FH, '>pic.png';
