@@ -158,87 +158,91 @@ __END__
 
 =head1 NAME
 
-Geo::Maps::Heatmap::Google - generate a density map (aka heatmap) overlay layer for Google Maps
+Geo::Heatmap - generate a density map (aka heatmap) overlay layer for Google Maps
 
 =head1 VERSION
 
-version 0.5
+version 0.07
 
 =head1 REQUIRES
 
-L<Storable>
-
-L<CHI>
-
-L<Image::Magick>
-
-L<USNaviguide_Google_Tiles>
-
 L<Moose>
-
+L<Storable>
+L<CHI>
+L<Image::Magick>
 
 =head1 METHODS
 
-=head2 calc_hm_tile
+=head2 tile
 
- calc_hm_tile();
+ tile();
 
-=head2 create_hm_tile
-
- create_hm_tile();
-
-=head2 create_tile
-
- create_tile();
+  return the tile image in png format
 
 
 =head1 ATTRIBUTES
 
-has 'debug'         => (isa => 'Str', is => 'rw');
-has 'cache'         => (isa => 'Object', is => 'rw');
-has 'logfile'       => (isa => 'Str', is => 'rw');
-has 'return_points' => (isa => 'CodeRef', is => 'rw');
-has 'zoom_scale'    => (isa => 'HashRef', is => 'rw');
-has 'palette'       => (isa => 'Str', is => 'rw');
+debug
+cache
+logfile
+return_points
+zoom_scale
+palette
 
-=head2 new
+=head2 USAGE
 
-  my $ghm = CPAN::Uploader->new();
+    Create a Heatmap layer for GoogleMaps
 
-This method returns a new uploader.  You probably don't need to worry about
-this method.
+    my $ghm = Geo::Heatmap->new();
+    $ghm->palette('palette.store');
+    $ghm->zoom_scale( {
+      1 => 298983,
+      2 => 177127,
+      3 => 104949,
+      4 => 90185,
+      5 => 70338,
+      6 => 37742,
+      7 => 28157,
+      8 => 12541,
+      9 => 3662,
+      10 => 1275,
+      11 => 417,
+      12 => 130,
+      13 => 41,
+      14 => 18,
+      15 => 10,
+      16 => 6,
+      17 => 2,
+      18 => 0,
+    } );
 
-Valid arguments are the same as those to C<upload_file>.
+    $ghm->cache($cache);
+    $ghm->return_points( \&get_points );
+    my $image = $ghm->tile($tile);
 
-=head2 read_config_file
 
-  my $config = CPAN::Uploader->read_config_file( $filename );
+    You need a color palette (one is included) to encode values to colors, in Storable Format as an arrayref of arrayrefs eg
+      [50] = [34, 45, 56]
+    which means that a normalized value of 50 would lead to an RGB color of 34% red , 45% blue, 56% green
 
-This reads the config file and returns a hashref of its contents that can be
-used as configuration for CPAN::Uploader.
+    zoom_scale
+      the maximum number of points for a given google zoom scale, you would be able to extract to values from the denisity log
+      or derive them from your data in some cunning way
 
-If no filename is given, it looks for F<.pause> in the user's home directory
-(from the env var C<HOME>, or the current directory if C<HOME> isn't set).
+    cache
+      you need some caching for the tiles otherwise the map would be quite slow. Use a CHI object with the cache you like
 
-=head2 log
+    return_points
+      is a function reference which expects a single hashref as a parameter which defines two LAT/LONG points to get all
+      data points within this box
+      $r->{LATN}, $r->{LNGW}), $r->{LATS}, $r->{LNGE}
+      the function has to return an arrayref of arrayrefs of the points within the box
 
-  $uploader->log($message);
+    tile
+      returns the rendered image
 
-This method logs the given string.  The default behavior is to print it to the
-screen.  The message should not end in a newline, as one will be added as
-needed.
 
-=head2 log_debug
 
-This method behaves like C<L</log>>, but only logs the message if the
-CPAN::Uploader is in debug mode.
-
-=head1 ORIGIN
-
-This code is mostly derived from C<cpan-upload-http> by Brad Fitzpatrick, which
-in turn was based on C<cpan-upload> by Neil Bowers.  I (I<rjbs>) didn't want to
-have to use a C<system> call to run either of those, so I refactored the code
-into this module.
 
 =head1 AUTHOR
 
@@ -246,40 +250,10 @@ Mark Hofstetter <hofstettm@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Mark Hofstetter
+This software is copyright (c) 2013 by Mark Hofstetter
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
-
-=cut
-
-=head1 REQUIRES
-
-L<Storable> 
-
-L<CHI> 
-
-L<Image::Magick> 
-
-L<USNaviguide_Google_Tiles> 
-
-L<Moose> 
-
-
-=head1 METHODS
-
-=head2 calc_hm_tile
-
- calc_hm_tile();
-
-=head2 create_hm_tile
-
- create_hm_tile();
-
-=head2 create_tile
-
- create_tile();
-
 
 =cut
 

@@ -1,0 +1,26 @@
+---
+abstract: 'generate a density map (aka heatmap) overlay layer for Google Maps'
+author:
+  - 'Mark Hofstetter <cpan@trust-box.at>'
+build_requires:
+  Test::More: 0
+configure_requires:
+  ExtUtils::MakeMaker: 6.30
+dynamic_config: 0
+generated_by: 'ExtUtils::MakeMaker version 6.62, CPAN::Meta::Converter version 2.120921'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Geo::Heatmap
+no_index:
+  directory:
+    - t
+    - inc
+requires:
+  CHI: 0.56
+  Image::Magick: 6.77
+  Moose: 2.0604
+version: 0.06
+resources:
+  repository: https://github.com/MarkHofstetter/GoogleMapsHeatmap
