@@ -4,4 +4,6 @@ GoogleMapsHeatmap.html
 MYMETA.json
 MYMETA.yml
 Makefile
-
+blib
+cleanup.sh
+pm_to_blib

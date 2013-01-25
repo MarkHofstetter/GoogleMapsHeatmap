@@ -13,7 +13,7 @@ has 'palette'       => (isa => 'Str', is => 'rw');
 
 __PACKAGE__->meta->make_immutable;
 
-our $VERSION = '0.05';
+our $VERSION = '0.07';
 
 sub tile {
   my ($self, $tile, $debug) = @_;
