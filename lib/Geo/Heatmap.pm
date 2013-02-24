@@ -191,7 +191,7 @@ palette
 
 =head2 USAGE
 
-    Create a Heatmap layer for GoogleMaps
+Create a Heatmap layer for GoogleMaps
 
     my $ghm = Geo::Heatmap->new();
     $ghm->palette('palette.store');
@@ -221,28 +221,40 @@ palette
     my $image = $ghm->tile($tile);
 
 
-    You need a color palette (one is included) to encode values to colors, in Storable Format as an arrayref of arrayrefs eg
-      [50] = [34, 45, 56]
-    which means that a normalized value of 50 would lead to an RGB color of 34% red , 45% blue, 56% green
+You need a color palette (one is included) to encode values to colors, in Storable Format as 
+an arrayref of arrayrefs eg
 
-    zoom_scale
-      the maximum number of points for a given google zoom scale, you would be able to extract to values from the denisity log
-      or derive them from your data in some cunning way
+    [50] = [34, 45, 56]
 
-    cache
-      you need some caching for the tiles otherwise the map would be quite slow. Use a CHI object with the cache you like
+which means that a normalized value of 50 would lead to an RGB color of 34% red , 45% blue, 
+56% green.
 
-    return_points
-      is a function reference which expects a single hashref as a parameter which defines two LAT/LONG points to get all
-      data points within this box
+=over 4
+
+=item zoom_scale
+
+The maximum number of points for a given google zoom scale. You would be able to extract 
+to values from the denisity log or derive them from your data in some cunning way
+
+=item cache
+
+You need some caching for the tiles otherwise the map would be quite slow. Use a CHI object 
+with the cache you like
+
+=item return_points
+
+A function reference which expects a single hashref as a parameter which defines two LAT/LONG 
+points to get all data points within this box:
+
       $r->{LATN}, $r->{LNGW}), $r->{LATS}, $r->{LNGE}
-      the function has to return an arrayref of arrayrefs of the points within the box
 
-    tile
-      returns the rendered image
+The function has to return an arrayref of arrayrefs of the points within the box
 
+=item tile
 
+Returns the rendered image
 
+=back
 
 =head1 AUTHOR
 
