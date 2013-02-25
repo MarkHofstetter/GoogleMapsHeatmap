@@ -13,7 +13,7 @@ has 'palette'       => (isa => 'Str', is => 'rw');
 
 __PACKAGE__->meta->make_immutable;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 sub tile {
   my ($self, $tile, $debug) = @_;
@@ -162,7 +162,7 @@ Geo::Heatmap - generate a density map (aka heatmap) overlay layer for Google Map
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 REQUIRES
 
@@ -259,6 +259,20 @@ Returns the rendered image
 =head1 AUTHOR
 
 Mark Hofstetter <hofstettm@cpan.org>
+
+Thanks to 
+brian d foy
+Marcel Gruenauer
+
+=head1 TODO
+
+* change to GoogleMaps API v3
+* put more magic in calculation of zoom scales
+* make more things configurable
+* add even more tests
+* Rewrite to use Imager http://search.cpan.org/~addi/Imager-0.43/Imager.pm
+* ...
+
 
 =head1 COPYRIGHT AND LICENSE
 
