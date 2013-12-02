@@ -45,10 +45,10 @@ $ghm->zoom_scale( {
 my $image = $ghm->tile($tile);
 is( length($image), 322419, 'blurred image created and has correct size');
 
-## open FH, '>pic.png';
-## binmode(FH);
-## print FH $image;
-## close FH;
+open FH, '>pic.png';
+binmode(FH);
+print FH $image;
+close FH;
 
 done_testing();
 
