@@ -10,6 +10,7 @@ has 'logfile'       => (isa => 'Str', is => 'rw');
 has 'return_points' => (isa => 'CodeRef', is => 'rw'); 
 has 'zoom_scale'    => (isa => 'HashRef', is => 'rw'); 
 has 'palette'       => (isa => 'Str', is => 'rw');
+has 'scale'         => (isa => 'Int', is => 'rw', default => 1);
 
 __PACKAGE__->meta->make_immutable;
 
@@ -89,7 +90,7 @@ sub calc_hm_tile {
   my $maxval = ($bin)**2;
   # $zoom_scale->{$z} |= 0;
   my $defscale = $zoom_scale->{$z} > 0 ? $zoom_scale->{$z} : $maxval;
-  $defscale *= 1.1;
+  $defscale *= 1.1 ;
   my $scale = 500/log($defscale);
   my $max = 256/$bin - 1;
   my $dmax = 0;
@@ -113,7 +114,7 @@ sub calc_hm_tile {
   }
   
   if ($self->logfile) {
-    open (LOG, ">>");
+    open (LOG, ">>". $self->logfile);
     printf LOG  "densitylog:  x y z pointcount: %s %s %s %s\n", $x, $y, $z, $dmax;
     close LOG;
   }
