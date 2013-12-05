@@ -19,8 +19,8 @@ no_index:
     - inc
 requires:
   CHI: 0.56
-  Image::Magick: 6.77
+  Imager: 0.94
   Moose: 2.0604
-version: 0.06
+version: 0.16
 resources:
   repository: https://github.com/MarkHofstetter/GoogleMapsHeatmap

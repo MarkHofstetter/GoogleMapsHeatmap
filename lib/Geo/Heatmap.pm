@@ -1,7 +1,6 @@
 package Geo::Heatmap;
 use Moose;
 use Geo::Heatmap::USNaviguide_Google_Tiles;
-use Image::Magick;
 use Imager;
 use Storable;
 
@@ -127,32 +126,6 @@ sub calc_hm_tile {
   $self->cache->set($mca, $ubblob);
   return $ubblob;
 }
-
-
-sub create_tile {
-  my ($tile) = @_;
-  my ($x, $y, $z) = split(/\s+/, $tile);
-  my $value      = &Google_Tile_Factors($z, 0) ;
-  my %r = Google_Tile_Calc($value, $y, $x);
-
-  my $image = Image::Magick->new(magick=>'png');
-  $image->Set(size=>'256x256');
-  $image->ReadImage('xc:white');
-  my $ps = get_points(\%r);
-
-  foreach my $p (@$ps) {
-    my @d = Google_Coord_to_Pix($value, $p->[0], $p->[1]);
-    my $ix = $d[1] - $r{PXW};
-    my $iy = $d[0] - $r{PYN};
-    $image->Set("pixel[$ix,$iy]"=>"rgb(0, 0, 89)");
-  }
-
-  my $nw = sprintf("%s %s", $r{LATN}, $r{LNGW});
-  my $se = sprintf("%s %s", $r{LATS}, $r{LNGE});
-  my ($blob) =  $image->ImageToBlob();
-  return $blob;
-}
-
 
 1;
 
@@ -340,6 +313,21 @@ Create a Heatmap layer for GoogleMaps
 
 =end html 
 
+You need a color palette (one is included) to encode values to colors, in Storable Format as 
+an arrayref of arrayrefs eg
+
+    [50] = [34, 45, 56]
+
+which means that a normalized value of 50 would lead to an RGB color of 34% red , 45% blue, 
+56% green.
+
+=over 4
+
+=item zoom_scale
+
+The maximum number of points for a given google zoom scale. You would be able to extract 
+to values from the denisity log or derive them from your data in some cunning way
+
 
 You need a color palette (one is included) to encode values to colors, in Storable Format as 
 an arrayref of arrayrefs eg
@@ -356,6 +344,7 @@ which means that a normalized value of 50 would lead to an RGB color of 34% red 
 The maximum number of points for a given google zoom scale. You would be able to extract 
 to values from the denisity log or derive them from your data in some cunning way
 
+>>>>>>> topic-imager
 =item cache
 
 You need some caching for the tiles otherwise the map would be quite slow. Use a CHI object 
