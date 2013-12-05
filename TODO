@@ -1,6 +1,0 @@
-+ Geo::Heatmap::GoogleMaps
-+ change to GoogleMaps API v3
-+ put more magic in calculation of zoom scales
-+ make more things configurable
-+ add even more tests
-+ ...

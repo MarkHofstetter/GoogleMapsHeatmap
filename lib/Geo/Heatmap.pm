@@ -2,19 +2,19 @@ package Geo::Heatmap;
 use Moose;
 use Geo::Heatmap::USNaviguide_Google_Tiles;
 use Image::Magick;
+use Imager;
 use Storable;
 
-has 'debug'         => (isa => 'Str', is => 'rw');
+has 'debug'         => (isa => 'Str', is => 'rw', default => 0);
 has 'cache'         => (isa => 'Object', is => 'rw');
 has 'logfile'       => (isa => 'Str', is => 'rw');
 has 'return_points' => (isa => 'CodeRef', is => 'rw'); 
 has 'zoom_scale'    => (isa => 'HashRef', is => 'rw'); 
 has 'palette'       => (isa => 'Str', is => 'rw');
 has 'scale'         => (isa => 'Int', is => 'rw', default => 1);
+has 'blur'          => (isa => 'Int', is => 'rw', default => 4);  
 
-__PACKAGE__->meta->make_immutable;
-
-our $VERSION = '0.08';
+our $VERSION = '0.15';
 
 sub tile {
   my ($self, $tile, $debug) = @_;
@@ -23,42 +23,43 @@ sub tile {
   my ($x, $y, $z) = split(/\s+/, $tile);
 
   my $e;
-  my $image = Image::Magick->new(magick=>'png');
   my %ubblob;
   my $k = 0;
   my $stitch;
   my $wi;
   my $line;
+  my $ts = 256;
 
   my $mca = sprintf("blur_%s_%s_%s", $x, $y, $z);
   my $ubblob = $self->cache->get($mca);
   return $ubblob if defined $ubblob;
 
+  my $image = Imager->new(xsize=>768, ysize=>768);
   for (my $i = -1; $i <= 1; $i++) {
-    my $li = Image::Magick->new();
+    my $li = Imager->new();
     for (my $j = -1; $j <= 1; $j++) {
-      $ubblob{$i}{$j} = $self->calc_hm_tile([$x+$j, $y+$i, $z], $debug);
-      $li->BlobToImage($ubblob{$i}{$j});
+      $ubblob{$i}{$j} = $self->calc_hm_tile([$x+$j, $y+$i, $z]);
+      $li->read(data => $ubblob{$i}{$j} ); 
+  #    printf "%s %s\n", ($i+1)*$ts, ($j+1)*$ts;
+      $image->paste(left=> ($j+1)*$ts, top=> ($i+1)*$ts, img=>$li);
     }
-    $line = $li->Append(stack => 'false');
-    push @$image, ($line);
   }
- 
-  $wi = $image->Append(stack => 'true');
-  $wi->GaussianBlur(geometry=>'768x768', radius=>"6", sigma=>"4");
-  $wi->Crop(geometry=>'255x255+256+256');
+
+  $image->filter(type=>"gaussian", stddev=>$self->blur);
+  my $cropped = $image->crop(left=>255, top=>255, width=>256, height=>256);
+  
   if ($debug > 1) {
     print "Debugging stitch\n";
-    $wi->Write($mca.".png");
   }
-  
-  $ubblob =  $wi->ImageToBlob();
+
+  $cropped->write(data => \$ubblob, type => 'png');
   $self->cache->set($mca, $ubblob);
   return $ubblob;
 }
 
+
 sub calc_hm_tile {
-  my ($self, $coord, $debug) = @_;
+  my ($self, $coord) = @_;
 
   my ($x, $y, $z) = @$coord;
 
@@ -70,9 +71,8 @@ sub calc_hm_tile {
   my $value = &Google_Tile_Factors($z, 0) ;
   my %r = Google_Tile_Calc($value, $y, $x);
 
-  my $image = Image::Magick->new(magick=>'png');
-  $image->Set(size=>'256x256');
-  $image->ReadImage('xc:white');
+  my $image = Imager->new(xsize=>256, ysize=>256);
+  $image->box(filled => 1, color => 'white');
   my $rp = $self->return_points();
   my $ps = &$rp(\%r);;
   my $palette = Storable::retrieve($self->palette);
@@ -84,7 +84,7 @@ sub calc_hm_tile {
     my $ix = $d[1] - $r{PXW};
     my $iy = $d[0] - $r{PYN};
     $density[int($ix/$bin)][int($iy/$bin)] ++;
-    printf "%s %s %s %s\n", $ix, $iy, $ix % $bin, $iy % $bin if $debug >5;
+    printf "%s %s %s %s\n", $ix, $iy, $ix % $bin, $iy % $bin if $self->debug >5;
   }
   
   my $maxval = ($bin)**2;
@@ -105,11 +105,15 @@ sub calc_hm_tile {
       $dmax = $d > $dmax ? $d : $dmax;
       my $color_index = int(500-log($d)*$scale);
       $color_index = 5 if $color_index < 1;
-      $color_index = -1 if $d < 2;
+      $color_index = -1 if $d < 3;
       my $color = $palette->[$color_index];
-      my $rgb = sprintf "%s%%, %s%%, %s%%", $color->[0], $color->[1], $color->[2];
-      $image->Draw(fill=>"rgb($rgb)" , primitive=>'rectangle', points=>"$xc,$yc $xlc,$ylc");
-      printf "[%s][%s] %s %s\n", $i, $j, $d, $color_index if $debug > 0;
+      # from percent to RGB - gna
+      my $rgb = Imager::Color->new( $color->[0] * 2.55, $color->[1]*2.55, $color->[2]*2.55 );
+      $image->box(color=> $rgb, xmin=>$xc,  ymin=>$yc,
+                               xmax=>$xlc, ymax=>$ylc, filled=>1);
+
+#      $image->Draw(fill=>"rgb($rgb)" , primitive=>'rectangle', points=>"$xc,$yc $xlc,$ylc");
+      printf "[%s][%s] %s %s\n", $i, $j, $d, $color_index if $self->debug > 0;
     }
   }
   
@@ -119,7 +123,7 @@ sub calc_hm_tile {
     close LOG;
   }
   
-  ($ubblob) = $image->ImageToBlob();
+  $image->write(data => \$ubblob, type => 'png');
   $self->cache->set($mca, $ubblob);
   return $ubblob;
 }
