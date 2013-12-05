@@ -1,39 +1,43 @@
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-<title>geographic distribution of something very interesting</title>
-<script src="http://maps.google.com/maps?file=api&v=2&key=[put your api key here!]"
-        type="text/javascript"></script>
-<script type="text/javascript">
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { height: 100% }
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=<yourkey>&sensor=true">
+    </script>
+    <script type="text/javascript">
+      var overlayMaps = [{
+        getTileUrl: function(coord, zoom) {
+          return "hm.fcgi?tile="+coord.x+"+"+coord.y+"+"+zoom;
+        },
 
-function load() {
-  if (GBrowserIsCompatible()) {
-    var urlTemplate = 'hm.fcgi?';
-        urlTemplate += 'map=data/test.map&';
-        urlTemplate += 'layers=datapoint&';
-        urlTemplate += 'mode=map&';
-        urlTemplate += 'tilemode=gmap&';
-        urlTemplate += 'tile={X}+{Y}+{Z}';
-    var myLayer = new GTileLayer(null,0,18,{
-                                 tileUrlTemplate:urlTemplate,
-                                 isPng:true,
-                                 opacity:0.5 });
-    var map = new GMap2(document.getElementById("map"));
-    map.addControl(new GLargeMapControl());
-    map.addControl(new GMapTypeControl());
-    map.setCenter(new GLatLng(48.2130, 16.375), 9);
-    map.addOverlay(new GTileLayerOverlay(myLayer));
-  }
-}
+        tileSize: new google.maps.Size(256, 256),
+        isPng: true,
+        opacity: 0.4 
+      }];
 
-</script>
-</head>
-<h2>geographic density distribution of something very interesting </h2>
-<body onload="load()" onunload="GUnload()">
-  <div id="map" style="width: 1200px; height: 700px"></div>
-</body>
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(48.2130, 16.375),
+          zoom: 9
+        };
+        var map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+
+      var overlayMap = new google.maps.ImageMapType(overlayMaps[0]);
+      map.overlayMapTypes.setAt(0,overlayMap);
+
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"/>
+  </body>
 </html>
-

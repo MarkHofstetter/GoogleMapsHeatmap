@@ -163,18 +163,20 @@ __END__
 
 =head1 NAME
 
-Geo::Heatmap - generate a density map (aka heatmap) overlay layer for Google Maps
+Geo::Heatmap - generate a density map (aka heatmap) overlay layer for Google Maps, see the www directory in the distro how it works
 
 =head1 VERSION
 
-version 0.08
+version 0.15
 
 =head1 REQUIRES
 
-L<Moose>
-L<Storable>
-L<CHI>
-L<Image::Magick>
+=begin html
+
+Moose <br>
+Storable <br>
+CHI <br>
+Imager <br>
 
 =head1 METHODS
 
@@ -198,6 +200,98 @@ palette
 
 Create a Heatmap layer for GoogleMaps
 
+=head3 The HTML part
+
+=begin html
+<pre>
+<code>
+  &lt;head&gt;
+     &lt;meta name="viewport" content="initial-scale=1.0, user-scalable=no" /&gt;
+     &lt;style type="text/css"&gt;
+       html { height: 100% }
+       body { height: 100%; margin: 0; padding: 0 }
+       #map-canvas { height: 100% }
+     &lt;/style&gt;
+     &lt;script type="text/javascript"
+       src="https://maps.googleapis.com/maps/api/js?key=<yourapikey>&sensor=true"&gt;
+     &lt;/script&gt;
+     &lt;script type="text/javascript"&gt;
+       var overlayMaps = [{
+         getTileUrl: function(coord, zoom) {
+           return "hm.fcgi?tile="+coord.x+"+"+coord.y+"+"+zoom;
+         },
+ 
+         tileSize: new google.maps.Size(256, 256),
+         isPng: true,
+         opacity: 0.4
+       }];
+ 
+       function initialize() {
+         var mapOptions = {
+           center: new google.maps.LatLng(48.2130, 16.375),
+           zoom: 9
+         };
+         var map = new google.maps.Map(document.getElementById("map-canvas"),
+             mapOptions);
+ 
+       var overlayMap = new google.maps.ImageMapType(overlayMaps[0]);
+       map.overlayMapTypes.setAt(0,overlayMap);
+ 
+       }
+       google.maps.event.addDomListener(window, 'load', initialize);
+ 
+     &lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+     &lt;div id="map-canvas"/&gt;
+  &lt;/body&gt;
+</code>
+</pre>
+<br>
+
+=end html
+
+=head3 The (f)cgi part
+
+<pre>
+<code>
+  #!/usr/bin/env perl
+  
+  use strict;
+  use FCGI;
+  use DBI;
+  use CHI;
+  use FindBin qw/$Bin/;
+  use lib "$Bin/../lib";
+  
+  use Geo::Heatmap;
+  
+  #my $cache = CHI->new( driver  => 'Memcached::libmemcached',
+  #    servers    => [ "127.0.0.1:11211" ],
+  #    namespace  => 'GoogleMapsHeatmap',
+  #);
+  
+  
+  my $cache = CHI->new( driver => 'File',
+           root_dir => '/tmp/GoogleMapsHeatmap'
+       );
+  
+  
+  our $dbh = DBI->connect("dbi:Pg:dbname=gisdb", 'gisdb', 'gisdb', {AutoCommit => 0});
+  
+  my $request = FCGI::Request();
+  
+  while ($request->Accept() >= 0) {
+    my $env = $request->GetEnvironment();
+    my $p = $env->{'QUERY_STRING'};
+  
+    my ($tile) = ($p =~ /tile=(.+)/);
+    $tile =~ s/\+/ /g;
+  
+    # package needs a CHI Object for caching
+    #               a Function Reference to get LatLOng within a Google Tile
+    #               maximum number of points per zoom level
+  
     my $ghm = Geo::Heatmap->new();
     $ghm->palette('palette.store');
     $ghm->zoom_scale( {
@@ -220,10 +314,31 @@ Create a Heatmap layer for GoogleMaps
       17 => 2,
       18 => 0,
     } );
+  
+  sub get_points {
+    my $r = shift;
+  
+    my $sth = $dbh->prepare( qq(select ST_AsEWKT(geom) from geodata
+                           where geom &&
+                ST_SetSRID(ST_MakeBox2D(ST_Point($r->{LATN}, $r->{LNGW}),
+                                        ST_Point($r->{LATS}, $r->{LNGE})
+                          ),4326))
+                );
+  
+    $sth->execute();
+  
+    my @p;
+    while (my @r = $sth->fetchrow) {
+      my ($x, $y) = ($r[0] =~/POINT\((.+?) (.+?)\)/);
+      push (@p, [$x ,$y]);
+    }
+    $sth->finish;
+    return \@p;
+  }
+  </code>
+  </pre>
 
-    $ghm->cache($cache);
-    $ghm->return_points( \&get_points );
-    my $image = $ghm->tile($tile);
+=end html 
 
 
 You need a color palette (one is included) to encode values to colors, in Storable Format as 
@@ -265,19 +380,22 @@ Returns the rendered image
 
 Mark Hofstetter <hofstettm@cpan.org>
 
-Thanks to 
-brian d foy
-Marcel Gruenauer
+  Thanks to 
+  brian d foy
+  Marcel Gruenauer
+  David Steinbrunner
 
 =head1 TODO
 
-* change to GoogleMaps API v3
-* put more magic in calculation of zoom scales
-* make more things configurable
-* add even more tests
-* Rewrite to use Imager http://search.cpan.org/~addi/Imager-0.43/Imager.pm
-* ...
+=begin html
 
+<ul>
+  <li> put more magic in calculation of zoom scales </li>
+  <li> make more things configurable </li>
+  <li> add even more tests </li>
+</ul>
+
+=end html
 
 =head1 COPYRIGHT AND LICENSE
 
