@@ -15,7 +15,7 @@ has 'blur'          => (isa => 'Int', is => 'rw', default => 4);
 
 __PACKAGE__->meta->make_immutable;
 
-our $VERSION = '0.07';
+our $VERSION = '0.15';
 
 sub tile {
   my ($self, $tile, $debug) = @_;
@@ -77,7 +77,7 @@ sub calc_hm_tile {
   my $rp = $self->return_points();
   my $ps = &$rp(\%r);;
   my $palette = Storable::retrieve($self->palette);
-  $palette->[-1] = [255, 255, 255];
+  $palette->[-1] = [100, 100, 100];
   my @density;
   my $bin = 8;
   foreach my $p (@$ps) {
@@ -106,10 +106,10 @@ sub calc_hm_tile {
       $dmax = $d > $dmax ? $d : $dmax;
       my $color_index = int(500-log($d)*$scale);
       $color_index = 5 if $color_index < 1;
-      $color_index = -1 if $d < 2;
+      $color_index = -1 if $d < 3;
       my $color = $palette->[$color_index];
-      # my $rgb = sprintf "%s%%, %s%%, %s%%", $color->[0], $color->[1], $color->[2];
-      my $rgb = Imager::Color->new( $color->[0], $color->[1], $color->[2] );
+      # from percent to RGB - gna
+      my $rgb = Imager::Color->new( $color->[0] * 2.55, $color->[1]*2.55, $color->[2]*2.55 );
       $image->box(color=> $rgb, xmin=>$xc,  ymin=>$yc,
                                xmax=>$xlc, ymax=>$ylc, filled=>1);
 
