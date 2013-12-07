@@ -12,8 +12,12 @@ has 'zoom_scale'    => (isa => 'HashRef', is => 'rw');
 has 'palette'       => (isa => 'Str', is => 'rw');
 has 'scale'         => (isa => 'Int', is => 'rw', default => 1);
 has 'blur'          => (isa => 'Int', is => 'rw', default => 4);  
+has 'bin'           => (isa => 'Int', is => 'rw', default => 8); # should be a divisor of 256 
+has 'density'       => (isa => 'HashRef', is => 'rw'); 
 
 our $VERSION = '0.15';
+
+__PACKAGE__->meta->make_immutable;
 
 sub tile {
   my ($self, $tile, $debug) = @_;
@@ -77,7 +81,7 @@ sub calc_hm_tile {
   my $palette = Storable::retrieve($self->palette);
   $palette->[-1] = [100, 100, 100];
   my @density;
-  my $bin = 8;
+  my $bin = $self->bin;
   foreach my $p (@$ps) {
     my @d = Google_Coord_to_Pix($value, $p->[0], $p->[1]);
     my $ix = $d[1] - $r{PXW};
@@ -328,23 +332,6 @@ which means that a normalized value of 50 would lead to an RGB color of 34% red 
 The maximum number of points for a given google zoom scale. You would be able to extract 
 to values from the denisity log or derive them from your data in some cunning way
 
-
-You need a color palette (one is included) to encode values to colors, in Storable Format as 
-an arrayref of arrayrefs eg
-
-    [50] = [34, 45, 56]
-
-which means that a normalized value of 50 would lead to an RGB color of 34% red , 45% blue, 
-56% green.
-
-=over 4
-
-=item zoom_scale
-
-The maximum number of points for a given google zoom scale. You would be able to extract 
-to values from the denisity log or derive them from your data in some cunning way
-
->>>>>>> topic-imager
 =item cache
 
 You need some caching for the tiles otherwise the map would be quite slow. Use a CHI object 
