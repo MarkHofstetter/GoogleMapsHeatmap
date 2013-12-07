@@ -15,7 +15,7 @@ has 'blur'          => (isa => 'Int', is => 'rw', default => 4);
 has 'bin'           => (isa => 'Int', is => 'rw', default => 8); # should be a divisor of 256 
 has 'density'       => (isa => 'HashRef', is => 'rw'); 
 
-our $VERSION = '0.15';
+our $VERSION = '0.17';
 
 __PACKAGE__->meta->make_immutable;
 
