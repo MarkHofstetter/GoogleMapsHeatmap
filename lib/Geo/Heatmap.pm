@@ -150,6 +150,8 @@ http://www.trust-box.at/dev/gm/GoogleMapsHeatmap/www/GoogleMapsHeatmap.html
 
 for Dokumentation see
 
+=head1 HOMEPAGE
+
 http://www.trust-box.at/googlemaps-geoheatmap/
 
 =head1 REQUIRES

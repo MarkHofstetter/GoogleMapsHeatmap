@@ -10,6 +10,8 @@ http://www.trust-box.at/dev/gm/GoogleMapsHeatmap/www/GoogleMapsHeatmap.html
 
 for Dokumentation see
 
+# HOMEPAGE
+
 http://www.trust-box.at/googlemaps-geoheatmap/
 
 # REQUIRES
