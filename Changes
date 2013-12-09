@@ -9,5 +9,7 @@ Revision history for Geo::Heatmap
         - Example to Create Zoom Scale
 
 {{$NEXT}}
+
+0.18  2013-12-09 10:01:46 CET
         - Working on documentation
         - Setting things in order
