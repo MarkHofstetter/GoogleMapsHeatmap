@@ -15,7 +15,7 @@ has 'blur'          => (isa => 'Int', is => 'rw', default => 4);
 has 'bin'           => (isa => 'Int', is => 'rw', default => 8); # should be a divisor of 256 
 has 'density'       => (isa => 'HashRef', is => 'rw'); 
 
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 
 __PACKAGE__->meta->make_immutable;
 
@@ -142,36 +142,38 @@ __END__
 
 Geo::Heatmap - generate a density map (aka heatmap) overlay layer for Google Maps, see the www directory in the distro how it works
 
-=head1 VERSION
+see the script directory for creating a scale
 
-version 0.15
+for a real life example see 
+
+http://www.trust-box.at/dev/gm/GoogleMapsHeatmap/www/GoogleMapsHeatmap.html
+
+for Dokumentation see
+
+http://www.trust-box.at/googlemaps-geoheatmap/
 
 =head1 REQUIRES
 
-=begin html
-
-Moose <br>
-Storable <br>
-CHI <br>
-Imager <br>
+  Moose
+  CHI
+  Imager
 
 =head1 METHODS
 
 =head2 tile
 
- tile();
+  tile();
 
   return the tile image in png format
 
-
 =head1 ATTRIBUTES
 
-debug
-cache
-logfile
-return_points
-zoom_scale
-palette
+  debug
+  cache
+  logfile
+  return_points
+  zoom_scale
+  palette
 
 =head2 USAGE
 
@@ -180,6 +182,7 @@ Create a Heatmap layer for GoogleMaps
 =head3 The HTML part
 
 =begin html
+
 <pre>
 <code>
   &lt;head&gt;
@@ -229,6 +232,8 @@ Create a Heatmap layer for GoogleMaps
 =end html
 
 =head3 The (f)cgi part
+
+=begin html
 
 <pre>
 <code>
@@ -351,6 +356,11 @@ The function has to return an arrayref of arrayrefs of the points within the box
 Returns the rendered image
 
 =back
+
+
+=head1 REPOSITORY
+
+L<https://github.com/MarkHofstetter/GoogleMapsHeatmap>
 
 =head1 AUTHOR
 

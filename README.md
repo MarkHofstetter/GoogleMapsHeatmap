@@ -2,16 +2,21 @@
 
 Geo::Heatmap - generate a density map (aka heatmap) overlay layer for Google Maps, see the www directory in the distro how it works
 
-# VERSION
+see the script directory for creating a scale
 
-version 0.15
+for a real life example see 
+
+http://www.trust-box.at/dev/gm/GoogleMapsHeatmap/www/GoogleMapsHeatmap.html
+
+for Dokumentation see
+
+http://www.trust-box.at/googlemaps-geoheatmap/
 
 # REQUIRES
 
-Moose <br>
-Storable <br>
-CHI <br>
-Imager <br>
+    Moose
+    CHI
+    Imager
 
 # METHODS
 
@@ -21,22 +26,39 @@ Imager <br>
 
     return the tile image in png format
 
-
-
 # ATTRIBUTES
 
-debug
-cache
-logfile
-return\_points
-zoom\_scale
-palette
+    debug
+    cache
+    logfile
+    return_points
+    zoom_scale
+    palette
 
 ## USAGE
 
 Create a Heatmap layer for GoogleMaps
 
 ### The HTML part
+
+<pre>
+<code>
+  &lt;head&gt;
+     &lt;meta name="viewport" content="initial-scale=1.0, user-scalable=no" /&gt;
+     &lt;style type="text/css"&gt;
+       html { height: 100% }
+       body { height: 100%; margin: 0; padding: 0 }
+       \#map-canvas { height: 100% }
+     &lt;/style&gt;
+     &lt;script type="text/javascript"
+       src="https://maps.googleapis.com/maps/api/js?key=<yourapikey>&sensor=true"&gt;
+     &lt;/script&gt;
+     &lt;script type="text/javascript"&gt;
+       var overlayMaps = \[{
+         getTileUrl: function(coord, zoom) {
+           return "hm.fcgi?tile="+coord.x+"+"+coord.y+"+"+zoom;
+         },
+ 
 
             tileSize: new google.maps.Size(256, 256),
             isPng: true,
@@ -184,6 +206,12 @@ which means that a normalized value of 50 would lead to an RGB color of 34% red 
 - tile
 
     Returns the rendered image
+
+
+
+# REPOSITORY
+
+[https://github.com/MarkHofstetter/GoogleMapsHeatmap](https://github.com/MarkHofstetter/GoogleMapsHeatmap)
 
 # AUTHOR
 

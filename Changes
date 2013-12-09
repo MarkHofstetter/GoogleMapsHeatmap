@@ -4,7 +4,10 @@ Revision history for Geo::Heatmap
         - Moved from Image::Magick to Imager
         - migrated HTML example to Google Map API V3
 
-{{$NEXT}}
 
 0.17  2013-12-07 06:04:59 CET
         - Example to Create Zoom Scale
+
+{{$NEXT}}
+        - Working on documentation
+        - Setting things in order
