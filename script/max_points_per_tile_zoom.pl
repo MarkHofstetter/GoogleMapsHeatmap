@@ -24,12 +24,12 @@ my $sth = $dbh->prepare(qq(
           not(St_X(geom) < -180 or St_Y(geom)< -90 or St_X(geom) > 180 or St_Y(geom) > 90)
     )
   SELECT ST_Extent(geom) as extent FROM geohash 
-    where st_geohash =
+    where st_geohash in
         (select st_geohash from 
            (select st_geohash, count(*) c 
               from geohash 
              group by st_geohash 
-     order by c desc limit 1) max_geohash)
+     order by c desc limit 2) max_geohash)
   )
 );
 
