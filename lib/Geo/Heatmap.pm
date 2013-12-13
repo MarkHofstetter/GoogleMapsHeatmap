@@ -10,12 +10,12 @@ has 'logfile'       => (isa => 'Str', is => 'rw');
 has 'return_points' => (isa => 'CodeRef', is => 'rw'); 
 has 'zoom_scale'    => (isa => 'HashRef', is => 'rw'); 
 has 'palette'       => (isa => 'Str', is => 'rw');
-has 'scale'         => (isa => 'Int', is => 'rw', default => 1);
+has 'scale'         => (isa => 'Num', is => 'rw', default => 1);
 has 'blur'          => (isa => 'Int', is => 'rw', default => 4);  
 has 'bin'           => (isa => 'Int', is => 'rw', default => 8); # should be a divisor of 256 
 has 'density'       => (isa => 'HashRef', is => 'rw'); 
 
-our $VERSION = '0.18';
+our $VERSION = '0.19';
 
 __PACKAGE__->meta->make_immutable;
 
@@ -49,6 +49,10 @@ sub tile {
   }
 
   $image->filter(type=>"gaussian", stddev=>$self->blur);
+  ##$image->filter(type=>"gradgen", 
+  ##             xo=>[ 1, 1, 1 ], 
+  ##             yo=>[ 1, 1, 1 ],
+  ##             colors=>[ qw(red blue green) ]);
   my $cropped = $image->crop(left=>255, top=>255, width=>256, height=>256);
   
   if ($debug > 1) {
@@ -93,7 +97,7 @@ sub calc_hm_tile {
   my $maxval = ($bin)**2;
   # $zoom_scale->{$z} |= 0;
   my $defscale = $zoom_scale->{$z} > 0 ? $zoom_scale->{$z} : $maxval;
-  $defscale *= 1.1 ;
+  $defscale *= 1.1 * $self->scale;
   my $scale = 500/log($defscale);
   my $max = 256/$bin - 1;
   my $dmax = 0;
@@ -130,6 +134,31 @@ sub calc_hm_tile {
   $self->cache->set($mca, $ubblob);
   return $ubblob;
 }
+
+
+sub max_points_per_tile_bin {
+  my ($self, $x, $y, $z) = @_;
+
+  my $value = &Google_Tile_Factors($z, 0) ;
+
+  my %r = Google_Tile_Calc($value, $y, $x);
+
+  my @density;
+  my $ps = $self->return_points->(\%r);
+  my $max = 0;
+  my $bin = $self->bin;
+
+  foreach my $p (@$ps) {
+    my @d = Google_Coord_to_Pix($value, $p->[0], $p->[1]);
+    my $ix = $d[1] - $r{PXW};
+    my $iy = $d[0] - $r{PYN};
+    $density[int($ix/$bin)][int($iy/$bin)] ++;
+    $max = $density[int($ix/$bin)][int($iy/$bin)] if $density[int($ix/$bin)][int($iy/$bin)] > $max;
+  }
+  return $max;
+}
+
+
 
 1;
 
