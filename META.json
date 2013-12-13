@@ -1,5 +1,5 @@
 {
-   "abstract" : "generate a density map (aka heatmap) overlay layer for Google Maps, see the www directory in the distro how it works",
+   "abstract" : "Generate a density map (aka heatmap) overlay layer for Google Maps",
    "author" : [
       "Mark Hofstetter <hofstettm@cpan.org>"
    ],
@@ -53,7 +53,7 @@
       "bugtracker" : {
          "web" : "https://github.com/MarkHofstetter/GoogleMapsHeatmap/issues"
       },
-      "homepage" : "https://github.com/MarkHofstetter/GoogleMapsHeatmap",
+      "homepage" : "http://www.trust-box.at/googlemaps-geoheatmap/",
       "repository" : {
          "type" : "git",
          "url" : "https://github.com/MarkHofstetter/GoogleMapsHeatmap.git",

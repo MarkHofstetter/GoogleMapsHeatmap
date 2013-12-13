@@ -140,19 +140,21 @@ __END__
 
 =head1 NAME
 
-Geo::Heatmap - generate a density map (aka heatmap) overlay layer for Google Maps, see the www directory in the distro how it works
+Geo::Heatmap - generate a density map (aka heatmap) overlay layer for Google Maps 
+
+see the www directory in the distro how it works
 
 see the script directory for creating a scale
 
 for a real life example see 
 
-http://www.trust-box.at/dev/gm/GoogleMapsHeatmap/www/GoogleMapsHeatmap.html
+L<http://www.trust-box.at/dev/gm/GoogleMapsHeatmap/www/GoogleMapsHeatmap.html>
 
 for Dokumentation see
 
 =head1 HOMEPAGE
 
-http://www.trust-box.at/googlemaps-geoheatmap/
+L<http://www.trust-box.at/googlemaps-geoheatmap/>
 
 =head1 REQUIRES
 
@@ -177,11 +179,11 @@ http://www.trust-box.at/googlemaps-geoheatmap/
   zoom_scale
   palette
 
-=head2 USAGE
+=head1 USAGE
 
 Create a Heatmap layer for GoogleMaps
 
-=head3 The HTML part
+=head2 The HTML part
 
 =begin html
 
@@ -233,7 +235,7 @@ Create a Heatmap layer for GoogleMaps
 
 =end html
 
-=head3 The (f)cgi part
+=head2 The (f)cgi part
 
 =begin html
 
